@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
-    <title>Weather App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather app</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="weather-container">
-        <h1>Weather App</h1>
-        <input type="text" id="zip" placeholder="Enter Zip Code">
-        <textarea id="feelings" placeholder="How are you feeling today?"></textarea>
-        <button id="generate">Get Weather</button>
-        <div id="entryHolder">
-            <div id="date"></div>
-            <div id="temp"></div>
-            <div id="content"></div>
-        </div>
-    </div>
-    <script src="app.js"></script>
+  <div class="app">
+    <header>
+      <h1>Weather app</h1>
+    </header>
+    <main>
+      <section>
+        <label for="zip">Enter ZIP code here:</label>
+        <input id="zip" type="text" placeholder="e.g., 94040" />
+        <label for="feelings">How are you feeling today?</label>
+        <textarea id="feelings" placeholder="Share your thoughts here"></textarea>
+        <button id="generate">Generate</button>
+      </section>
+      <section id="entryHolder">
+        <div id="date">Date: </div>
+        <div id="temp">Temperature: </div>
+        <div id="content">Feelings: </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>

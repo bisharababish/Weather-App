@@ -1,64 +1,59 @@
-// Personal API Key for OpenWeatherMap API
-const apiKey = 'e4b94e73fd77294305a84b586563d4be';
+const apiKey = 'e4b94e73fd77294305a84b586563d4be&units=imperial';
 
-// Generate Button Event Listener
-document.getElementById('generate').addEventListener('click', performAction);
-
-function performAction() {
-    const zip = document.getElementById('zip').value;
-    const feelings = document.getElementById('feelings').value;
-    console.log('Feelings input value:', feelings);
-
-    getWeatherData(zip)
-        .then((data) => {
-            const newDate = new Date().toLocaleDateString();
-            postData('/add', {
-                date: newDate,
-                temp: data.main.temp,
-                feel: feelings,
-            });
-        })
-        .then(updateUI);
-}
-
-// fetches the weather data from the link provided 
-const getWeatherData = async (zip) => {
-    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=e4b94e73fd77294305a84b586563d4be`);
+const fetchWeather = async (baseURL, zip, apiKey) => {
+    const response = await fetch(`${baseURL}zip=${zip}&appid=${apiKey}`);
     try {
-        return await res.json();
-
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error('Error fetching weather data:', error);
     }
 };
 
-// post method 
 const postData = async (url = '', data = {}) => {
-    console.log('Data sent to server:', data);
-    const res = await fetch(url, {
+    const response = await fetch(url, {
         method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
     });
     try {
-        return await res.json();
+        const newData = await response.json();
+        return newData;
     } catch (error) {
         console.error('Error posting data:', error);
-        alert(`Error: ${error.message}`);
-
     }
 };
 
-// updates the ui with the information when fetched
 const updateUI = async () => {
-    const req = await fetch('/all');
+    const request = await fetch('/getData');
     try {
-        const allData = await req.json();
-        document.getElementById('date').innerHTML = `Date: ${allData.date}`;
-        document.getElementById('temp').innerHTML = `Temperature: ${Math.round(allData.temp)}°F`;
-        document.getElementById('content').innerHTML = `Feelings: ${allData.feel}`;
+        const allData = await request.json();
+        document.getElementById('temp').innerHTML = `${Math.round(allData.temperature)}°F`;
+        document.getElementById('date').innerHTML = allData.date;
+        document.getElementById('content').innerHTML = allData.userResponse;
     } catch (error) {
         console.error('Error updating UI:', error);
     }
 };
+
+document.getElementById('generate').addEventListener('click', async () => {
+    const zip = document.getElementById('zip').value;
+    const feelings = document.getElementById('feelings').value;
+
+    const baseURL = 'http://api.openweathermap.org/data/2.5/weather?';
+    const weatherData = await fetchWeather(baseURL, zip, apiKey);
+
+    if (weatherData.main) {
+        const newDate = new Date().toLocaleDateString();
+        await postData('/addData', {
+            temperature: weatherData.main.temp,
+            date: newDate,
+            userResponse: feelings,
+        });
+        updateUI();
+    } else {
+        alert('Try Again with a different zipcode.');
+    }
+});
